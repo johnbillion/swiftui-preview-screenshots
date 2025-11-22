@@ -9,3 +9,7 @@ The preview screenshot functionality is provided by [the SnapshotPreviews packag
 ```
 make screenshots
 ```
+
+## Can't I just use SnapshotPreviews for this?
+
+Yes but you'll need to figure out how to process the XCTest result files to extract the screenshot assets. This library avoids the need to do so by saving the screenshots directly instead of storing them as test assets.
