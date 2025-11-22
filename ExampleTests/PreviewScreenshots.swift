@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import AppKit
 import SnapshotPreviewsCore
+import UniformTypeIdentifiers
 
 /// Discovers all SwiftUI previews and saves screenshots directly to disk.
 /// Uses SnapshotPreviewsCore for preview discovery and SwiftUI's ImageRenderer for rendering.
@@ -55,17 +56,18 @@ public enum PreviewScreenshots {
         let renderer = ImageRenderer(content: wrappedView)
         renderer.scale = 2.0  // Retina
 
-        guard let image = renderer.nsImage else {
+        guard let cgImage = renderer.cgImage else {
             throw ScreenshotError.renderingFailed
         }
 
-        guard let tiffData = image.tiffRepresentation,
-              let bitmap = NSBitmapImageRep(data: tiffData),
-              let pngData = bitmap.representation(using: .png, properties: [:]) else {
+        // Write CGImage directly to PNG
+        guard let destination = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) else {
             throw ScreenshotError.encodingFailed
         }
-
-        try pngData.write(to: url)
+        CGImageDestinationAddImage(destination, cgImage, nil)
+        guard CGImageDestinationFinalize(destination) else {
+            throw ScreenshotError.encodingFailed
+        }
     }
 
     /// Generates a filename for a preview.
