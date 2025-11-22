@@ -41,3 +41,9 @@ struct GreetingView: View {
         .environment(\.layoutDirection, .rightToLeft)
         .frame(width: 400, height: 300)
 }
+
+#Preview("Dark Mode") {
+    GreetingView()
+        .frame(width: 400, height: 300)
+        .preferredColorScheme(.dark)
+}

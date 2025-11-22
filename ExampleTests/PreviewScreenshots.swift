@@ -47,9 +47,9 @@ public enum PreviewScreenshots {
     /// Saves a single preview to a file.
     private static func savePreview(_ preview: SnapshotPreviewsCore.Preview, to url: URL) throws {
         let view = AnyView(preview.view())
-        // Wrap the view with a background color to avoid transparent screenshots
-        let wrappedView = ZStack {
-            Color(nsColor: .windowBackgroundColor)
+
+        // Wrap the view with colour scheme awareness
+        let wrappedView = ColorSchemeAwareBackground {
             view
         }
         let renderer = ImageRenderer(content: wrappedView)
@@ -94,5 +94,43 @@ public enum PreviewScreenshots {
             .deletingLastPathComponent()  // ExampleTests/
             .deletingLastPathComponent()  // project root
             .appendingPathComponent("screenshots")
+    }
+}
+
+/// A wrapper view that detects the preferred color scheme and applies an appropriate background.
+/// Uses PreferredColorSchemeWrapper to capture .preferredColorScheme() from child views.
+@available(macOS 13.0, *)
+private struct ColorSchemeAwareBackground<Content: View>: View {
+    @State private var detectedScheme: ColorScheme?
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        let effectiveScheme = detectedScheme ?? .light
+
+        ZStack {
+            backgroundColorForScheme(effectiveScheme)
+            PreferredColorSchemeWrapper({
+                content
+            }, colorSchemeUpdater: { scheme in
+                detectedScheme = scheme
+            })
+        }
+        .environment(\.colorScheme, effectiveScheme)
+    }
+
+    private func backgroundColorForScheme(_ scheme: ColorScheme) -> Color {
+        let appearance: NSAppearance? = scheme == .dark
+            ? NSAppearance(named: .darkAqua)
+            : NSAppearance(named: .aqua)
+
+        var resolvedColor: NSColor = .windowBackgroundColor
+        appearance?.performAsCurrentDrawingAppearance {
+            resolvedColor = NSColor.windowBackgroundColor
+        }
+        return Color(nsColor: resolvedColor)
     }
 }
