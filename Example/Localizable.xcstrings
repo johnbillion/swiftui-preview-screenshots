@@ -1,0 +1,44 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Calendar Access Required" : {
+      "comment" : "Title for calendar permission prompt"
+    },
+    "Grant Access" : {
+      "comment" : "Button to request calendar permission"
+    },
+    "Hello, %@!" : {
+      "comment" : "Greeting message shown to user",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مرحبا، %@!"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hallo, %@!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hello, %@!"
+          }
+        }
+      }
+    },
+    "Open System Settings" : {
+      "comment" : "Button to open System Settings"
+    },
+    "Please enable calendar access in System Settings." : {
+      "comment" : "Description for calendar permission denied state"
+    },
+    "This app needs access to your calendars to display and manage your events." : {
+      "comment" : "Description for calendar permission prompt"
+    }
+  },
+  "version" : "1.0"
+}
