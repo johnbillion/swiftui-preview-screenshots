@@ -11,11 +11,16 @@ import UniformTypeIdentifiers
 public enum PreviewScreenshots {
 
     /// Discovers all previews and saves screenshots to the specified directory.
-    /// - Parameter outputDirectory: Directory to save screenshots. Defaults to "screenshots" in current working directory.
+    /// - Parameters:
+    ///   - outputDirectory: Directory to save screenshots. If nil, saves to "screenshots" relative to the calling file's directory.
+    ///   - callerFile: Used to determine the default output directory. Pass `#file` or leave as default.
     /// - Returns: Number of screenshots saved.
     @discardableResult
-    public static func saveAllPreviews(to outputDirectory: URL? = nil) throws -> Int {
-        let outputDir = outputDirectory ?? defaultOutputDirectory()
+    public static func saveAllPreviews(
+        to outputDirectory: URL? = nil,
+        callerFile: StaticString = #file
+    ) throws -> Int {
+        let outputDir = outputDirectory ?? defaultOutputDirectory(callerFile: callerFile)
 
         // Clear existing screenshots and recreate directory
         try? FileManager.default.removeItem(at: outputDir)
@@ -87,14 +92,11 @@ public enum PreviewScreenshots {
         }
     }
 
-    /// Returns the default output directory (screenshots folder in project root).
-    /// Uses #file to reliably locate the project directory at compile time.
-    private static func defaultOutputDirectory() -> URL {
-        // #file gives us the path to this source file (e.g., /path/to/project/ExampleTests/PreviewScreenshots.swift)
-        // Go up one level to get the project root
-        URL(fileURLWithPath: #file)
-            .deletingLastPathComponent()  // ExampleTests/
-            .deletingLastPathComponent()  // project root
+    /// Returns the default output directory (screenshots folder relative to the caller's file location).
+    private static func defaultOutputDirectory(callerFile: StaticString) -> URL {
+        URL(fileURLWithPath: "\(callerFile)")
+            .deletingLastPathComponent()  // Remove filename (e.g., SnapshotTests.swift)
+            .deletingLastPathComponent()  // Remove directory (e.g., ExampleTests/)
             .appendingPathComponent("screenshots")
     }
 }

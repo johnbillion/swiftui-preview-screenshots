@@ -5,9 +5,8 @@ options:
     macOS: "15.0"
 
 packages:
-  SnapshotPreviews:
-    url: https://github.com/EmergeTools/SnapshotPreviews
-    from: 0.5.0
+  PreviewScreenshots:
+    path: .
 
 schemes:
   Example:
@@ -61,8 +60,8 @@ targets:
     dependencies:
       - target: Example
         link: false
-      - package: SnapshotPreviews
-        product: SnapshotPreviewsCore
+      - package: PreviewScreenshots
+        product: PreviewScreenshots
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.example.app.tests
       GENERATE_INFOPLIST_FILE: YES
